@@ -239,14 +239,17 @@
     ];
 
     const acoes = [
-        () => {
-            document.getElementById("nome-revelado").textContent =
-                "peso do";
-        },
-        () => {
-            document.getElementById("nome-revelado").textContent =
-                "peso do sobrenome >o<";
-        },
+        
+() => {
+    document.getElementById("nome-revelado").textContent =
+        "peso do" +
+        (encontrados.has(1) ? " sobrenome >o<" : "");
+},
+() => {
+    document.getElementById("nome-revelado").textContent =
+        "peso do" +
+        (encontrados.has(0) ? " sobrenome >o<" : "");
+},
         () => document.getElementById("msg1").classList.remove("oculta"),
         () => document.getElementById("msg2").classList.remove("oculta"),
         () => document.getElementById("msg3").classList.remove("oculta"),
