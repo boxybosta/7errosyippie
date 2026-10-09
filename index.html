@@ -221,20 +221,13 @@
     </tbody>
 </table>
 
+
 <script>
     const imagem = document.getElementById("imagem-diferencas");
     const area = document.getElementById("area-cliques");
     const encontrados = new Set();
 
-    /*
-      COORDENADAS DE EXEMPLO.
-
-      x = porcentagem da largura da imagem, da esquerda.
-      y = porcentagem da altura da imagem, de cima.
-      tolerance = raio aproximado para aceitar um clique.
-
-      Ajuste x e y para os locais reais dos sete erros.
-    */
+    // Coordenadas em pixels da imagem original.
     const erros = [
         { x: 1213, y: 599, tolerance: 3 },
         { x: 1239, y: 1085, tolerance: 3 },
@@ -245,7 +238,6 @@
         { x: 563, y: 1143, tolerance: 5 }
     ];
 
-    // Mensagens liberadas em cada acerto.
     const acoes = [
         () => {
             document.getElementById("nome-revelado").textContent =
@@ -255,62 +247,90 @@
             document.getElementById("nome-revelado").textContent =
                 "peso do sobrenome >o<";
         },
-        () => {
-            document.getElementById("msg1").classList.remove("oculta");
-        },
-        () => {
-            document.getElementById("msg2").classList.remove("oculta");
-        },
-        () => {
-            document.getElementById("msg3").classList.remove("oculta");
-        },
-        () => {
-            document.getElementById("msg4").classList.remove("oculta");
-        },
-        () => {
-            document.getElementById("msg5").classList.remove("oculta");
-        }
+        () => document.getElementById("msg1").classList.remove("oculta"),
+        () => document.getElementById("msg2").classList.remove("oculta"),
+        () => document.getElementById("msg3").classList.remove("oculta"),
+        () => document.getElementById("msg4").classList.remove("oculta"),
+        () => document.getElementById("msg5").classList.remove("oculta")
     ];
 
-    area.addEventListener("click", function(event) {
-        const rect = imagem.getBoundingClientRect();
+    function iniciarJogo() {
+        // Garante que a imagem já foi carregada e tem dimensões.
+        if (!imagem.naturalWidth || !imagem.naturalHeight) {
+            console.error(
+                "A imagem não carregou. Verifique o nome do arquivo: " +
+                imagem.getAttribute("src")
+            );
+            return;
+        }
 
-        const x = ((event.clientX - rect.left) / rect.width) * 100;
-        const y = ((event.clientY - rect.top) / rect.height) * 100;
+        area.addEventListener("click", function(event) {
+            const rect = imagem.getBoundingClientRect();
 
-        const indice = erros.findIndex((erro, i) => {
-            if (encontrados.has(i)) return false;
+            // Posição do clique em pixels na imagem exibida.
+            const cliqueX = event.clientX - rect.left;
+            const cliqueY = event.clientY - rect.top;
 
-            const dx = (x - erro.x) * rect.width / 100;
-            const dy = (y - erro.y) * rect.height / 100;
+            const indice = erros.findIndex((erro, i) => {
+                if (encontrados.has(i)) return false;
 
-            return Math.hypot(dx, dy) <=
-                erro.tolerance * rect.width / 100;
+                // Converte as coordenadas originais para a escala exibida.
+                const erroX = erro.x / imagem.naturalWidth * rect.width;
+                const erroY = erro.y / imagem.naturalHeight * rect.height;
+
+                const dx = cliqueX - erroX;
+                const dy = cliqueY - erroY;
+
+                const raio = erro.tolerance * rect.width / 100;
+
+                return Math.hypot(dx, dy) <= raio;
+            });
+
+            if (indice === -1) return;
+
+            encontrados.add(indice);
+
+            const erro = erros[indice];
+            const circulo = document.createElement("div");
+            circulo.className = "circulo";
+
+            // Converte a posição do erro para porcentagens da imagem.
+            circulo.style.left =
+                (erro.x / imagem.naturalWidth * 100) + "%";
+            circulo.style.top =
+                (erro.y / imagem.naturalHeight * 100) + "%";
+
+            area.appendChild(circulo);
+
+            acoes[indice]();
+
+            document.getElementById("quantidade").textContent =
+                encontrados.size;
+
+            if (encontrados.size === 7) {
+                document.getElementById("contador").textContent =
+                    "pabéns! 7 / 7";
+            }
         });
 
-        // Cliques fora dos erros não fazem nada.
-        if (indice === -1) return;
+        console.log(
+            "Jogo iniciado!",
+            "Dimensões da imagem:",
+            imagem.naturalWidth + " × " + imagem.naturalHeight
+        );
+    }
 
-        encontrados.add(indice);
+    if (imagem.complete) {
+        iniciarJogo();
+    } else {
+        imagem.addEventListener("load", iniciarJogo, { once: true });
+    }
 
-        // Marca o erro com um círculo verde.
-        const circulo = document.createElement("div");
-        circulo.className = "circulo";
-        circulo.style.left = erros[indice].x + "%";
-        circulo.style.top = erros[indice].y + "%";
-        area.appendChild(circulo);
-
-        // Revela a mensagem correspondente.
-        acoes[indice]();
-
-        // Atualiza o contador.
-        document.getElementById("quantidade").textContent =
-            encontrados.size;
-
-        if (encontrados.size === 7) {
-            document.getElementById("contador").textContent =
-                "pabens! 7 / 7";
-        }
+    imagem.addEventListener("error", function() {
+        console.error(
+            "Não foi possível carregar a imagem:",
+            imagem.getAttribute("src")
+        );
     });
 </script>
 
