@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -23,7 +24,6 @@
         margin: 10px 0 25px;
     }
 
-    /* Contador fixo no canto superior direito */
     #contador {
         position: fixed;
         top: 15px;
@@ -38,7 +38,6 @@
         box-shadow: 0 3px 12px #0006;
     }
 
-    /* Imagens lado a lado */
     .imagens {
         display: flex;
         justify-content: center;
@@ -62,7 +61,6 @@
         height: auto;
     }
 
-    /* Área clicável cobre a imagem 2, à esquerda */
     #area-cliques {
         position: absolute;
         inset: 0;
@@ -80,7 +78,6 @@
         box-shadow: 0 0 5px #00ff66;
     }
 
-    /* Tabela abaixo das imagens */
     .tabela {
         width: 100%;
         max-width: 850px;
@@ -157,8 +154,6 @@
 <h1>Jogo dos Sete Erros</h1>
 
 <div class="imagens">
-
-    <!-- IMAGEM 2: diferenças, à ESQUERDA -->
     <div class="painel-imagem">
         <img id="imagem-diferencas"
              src="7 erros pika.png"
@@ -166,12 +161,10 @@
         <div id="area-cliques"></div>
     </div>
 
-    <!-- IMAGEM 1: original, à DIREITA -->
     <div class="painel-imagem">
         <img src="COVER_pesodosobrenome.png"
              alt="Imagem original">
     </div>
-
 </div>
 
 <table class="tabela">
@@ -221,7 +214,6 @@
     </tbody>
 </table>
 
-
 <script>
     const imagem = document.getElementById("imagem-diferencas");
     const area = document.getElementById("area-cliques");
@@ -238,35 +230,27 @@
         { x: 563, y: 1143, tolerance: 5 }
     ];
 
-const acoes = [
-    () => atualizarNome(),
-    () => atualizarNome(),
-    () => document.getElementById("msg1").classList.remove("oculta"),
-    () => document.getElementById("msg2").classList.remove("oculta"),
-    () => document.getElementById("msg3").classList.remove("oculta"),
-    () => document.getElementById("msg4").classList.remove("oculta"),
-    () => document.getElementById("msg5").classList.remove("oculta")
-];
+    // Atualiza o nome com base nos dois erros já encontrados.
+    function atualizarNome() {
+        const nome = document.getElementById("nome-revelado");
+        let texto = "";
 
-function atualizarNome() {
-    const nome = document.getElementById("nome-revelado");
+        if (encontrados.has(0)) {
+            texto += "peso do";
+        }
 
-    const primeiraParte = encontrados.has(0);
-    const segundaParte = encontrados.has(1);
+        if (encontrados.has(1)) {
+            if (texto !== "") texto += " ";
+            texto += "sobrenome >o<";
+        }
 
-    let texto = "";
-
-    if (primeiraParte) {
-        texto += "peso do";
+        nome.textContent = texto;
     }
 
-    if (segundaParte) {
-        if (texto !== "") texto += " ";
-        texto += "sobrenome >o<";
-    }
-
-    nome.textContent = texto;
-}
+    // Cada erro revela sua própria dica.
+    const acoes = [
+        atualizarNome,
+        atualizarNome,
         () => document.getElementById("msg1").classList.remove("oculta"),
         () => document.getElementById("msg2").classList.remove("oculta"),
         () => document.getElementById("msg3").classList.remove("oculta"),
@@ -275,10 +259,9 @@ function atualizarNome() {
     ];
 
     function iniciarJogo() {
-        // Garante que a imagem já foi carregada e tem dimensões.
         if (!imagem.naturalWidth || !imagem.naturalHeight) {
             console.error(
-                "A imagem não carregou. Verifique o nome do arquivo: " +
+                "A imagem não carregou. Verifique o nome do arquivo:",
                 imagem.getAttribute("src")
             );
             return;
@@ -287,20 +270,19 @@ function atualizarNome() {
         area.addEventListener("click", function(event) {
             const rect = imagem.getBoundingClientRect();
 
-            // Posição do clique em pixels na imagem exibida.
             const cliqueX = event.clientX - rect.left;
             const cliqueY = event.clientY - rect.top;
 
             const indice = erros.findIndex((erro, i) => {
                 if (encontrados.has(i)) return false;
 
-                // Converte as coordenadas originais para a escala exibida.
-                const erroX = erro.x / imagem.naturalWidth * rect.width;
-                const erroY = erro.y / imagem.naturalHeight * rect.height;
+                const erroX =
+                    erro.x / imagem.naturalWidth * rect.width;
+                const erroY =
+                    erro.y / imagem.naturalHeight * rect.height;
 
                 const dx = cliqueX - erroX;
                 const dy = cliqueY - erroY;
-
                 const raio = erro.tolerance * rect.width / 100;
 
                 return Math.hypot(dx, dy) <= raio;
@@ -313,8 +295,6 @@ function atualizarNome() {
             const erro = erros[indice];
             const circulo = document.createElement("div");
             circulo.className = "circulo";
-
-            // Converte a posição do erro para porcentagens da imagem.
             circulo.style.left =
                 (erro.x / imagem.naturalWidth * 100) + "%";
             circulo.style.top =
@@ -329,7 +309,7 @@ function atualizarNome() {
 
             if (encontrados.size === 7) {
                 document.getElementById("contador").textContent =
-                    "pabéns! 7 / 7";
+                    "pabens! 7 / 7";
             }
         });
 
