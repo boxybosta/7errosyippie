@@ -238,18 +238,35 @@
         { x: 563, y: 1143, tolerance: 5 }
     ];
 
-    const acoes = [
-        
-() => {
-    document.getElementById("nome-revelado").textContent =
-        "peso do" +
-        (encontrados.has(1) ? " sobrenome >o<" : "");
-},
-() => {
-    document.getElementById("nome-revelado").textContent =
-        "peso do" +
-        (encontrados.has(0) ? " sobrenome >o<" : "");
-},
+const acoes = [
+    () => atualizarNome(),
+    () => atualizarNome(),
+    () => document.getElementById("msg1").classList.remove("oculta"),
+    () => document.getElementById("msg2").classList.remove("oculta"),
+    () => document.getElementById("msg3").classList.remove("oculta"),
+    () => document.getElementById("msg4").classList.remove("oculta"),
+    () => document.getElementById("msg5").classList.remove("oculta")
+];
+
+function atualizarNome() {
+    const nome = document.getElementById("nome-revelado");
+
+    const primeiraParte = encontrados.has(0);
+    const segundaParte = encontrados.has(1);
+
+    let texto = "";
+
+    if (primeiraParte) {
+        texto += "peso do";
+    }
+
+    if (segundaParte) {
+        if (texto !== "") texto += " ";
+        texto += "sobrenome >o<";
+    }
+
+    nome.textContent = texto;
+}
         () => document.getElementById("msg1").classList.remove("oculta"),
         () => document.getElementById("msg2").classList.remove("oculta"),
         () => document.getElementById("msg3").classList.remove("oculta"),
