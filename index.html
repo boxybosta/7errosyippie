@@ -1,42 +1,318 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>>o<</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>>o<</title>
 
-    <style>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 30px 20px;
+        background: #292929;
+        color: white;
+        font-family: Arial, sans-serif;
+    }
+
+    h1 {
+        text-align: center;
+        margin: 10px 0 25px;
+    }
+
+    /* Contador fixo no canto superior direito */
+    #contador {
+        position: fixed;
+        top: 15px;
+        right: 18px;
+        z-index: 100;
+        background: #191919;
+        border: 1px solid #00ff66;
+        border-radius: 8px;
+        padding: 12px 16px;
+        color: #00ff66;
+        font-weight: bold;
+        box-shadow: 0 3px 12px #0006;
+    }
+
+    /* Imagens lado a lado */
+    .imagens {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 20px;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .painel-imagem {
+        position: relative;
+        width: calc(50% - 10px);
+        flex: 0 0 calc(50% - 10px);
+        line-height: 0;
+    }
+
+    .painel-imagem img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    /* Área clicável cobre a imagem 2, à esquerda */
+    #area-cliques {
+        position: absolute;
+        inset: 0;
+        cursor: crosshair;
+    }
+
+    .circulo {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        border: 3px solid #00ff66;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        box-shadow: 0 0 5px #00ff66;
+    }
+
+    /* Tabela abaixo das imagens */
+    .tabela {
+        width: 100%;
+        max-width: 850px;
+        margin: 30px auto;
+        border-collapse: collapse;
+        text-align: left;
+        line-height: 1.5;
+    }
+
+    .tabela th,
+    .tabela td {
+        border-bottom: 1px solid #777;
+        padding: 13px 15px;
+    }
+
+    .tabela th {
+        font-size: 18px;
+        font-weight: normal;
+    }
+
+    .numero {
+        width: 55px;
+        vertical-align: top;
+    }
+
+    .mensagem {
+        color: white;
+    }
+
+    .oculta {
+        visibility: hidden;
+    }
+
+    #nome-revelado {
+        color: #fff;
+    }
+
+    @media (max-width: 650px) {
         body {
-            margin: 0;
-            min-height: 100vh;
-            background-color: #292929;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 65px 10px 20px;
         }
 
         .imagens {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            width: 90%;
-            max-width: 1200px;
+            gap: 8px;
         }
 
-        .imagens img {
-            width: calc(50% - 10px);
-            height: auto;
-            display: block;
+        .painel-imagem {
+            width: calc(50% - 4px);
+            flex-basis: calc(50% - 4px);
         }
-    </style>
+
+        #contador {
+            top: 8px;
+            right: 8px;
+            padding: 8px 10px;
+            font-size: 13px;
+        }
+
+        .tabela th,
+        .tabela td {
+            padding: 10px 8px;
+            overflow-wrap: anywhere;
+        }
+    }
+</style>
 </head>
 
 <body>
-    <div class="imagens">
-        <img src="COVER_pesodosobrenome.png" alt="Primeira imagem">
-        <img src="7 erros pika.png" alt="Segunda imagem">
+
+<div id="contador">
+    Erros: <span id="quantidade">0</span> / 7
+</div>
+
+<h1>Jogo dos Sete Erros</h1>
+
+<div class="imagens">
+
+    <!-- IMAGEM 2: diferenças, à ESQUERDA -->
+    <div class="painel-imagem">
+        <img id="imagem-diferencas"
+             src="7 erros pika.png"
+             alt="Imagem com os sete erros">
+        <div id="area-cliques"></div>
     </div>
+
+    <!-- IMAGEM 1: original, à DIREITA -->
+    <div class="painel-imagem">
+        <img src="COVER_pesodosobrenome.png"
+             alt="Imagem original">
+    </div>
+
+</div>
+
+<table class="tabela">
+    <thead>
+        <tr>
+            <th colspan="2">
+                Nome: <span id="nome-revelado"></span>
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td class="numero">1.</td>
+            <td id="msg1" class="mensagem oculta">
+                quer ter o mais perfeito cenário amoroso comigo? °v°
+            </td>
+        </tr>
+
+        <tr>
+            <td class="numero">2.</td>
+            <td id="msg2" class="mensagem oculta">
+                baby, você é tão linda, nem precisa de MONjaro
+            </td>
+        </tr>
+
+        <tr>
+            <td class="numero">3.</td>
+            <td id="msg3" class="mensagem oculta">
+                pq nossos melhores momentos sempre são em veículos?
+            </td>
+        </tr>
+
+        <tr>
+            <td class="numero">4.</td>
+            <td id="msg4" class="mensagem oculta">
+                me morde, me arranha, me beija, me ama
+            </td>
+        </tr>
+
+        <tr>
+            <td class="numero">5.</td>
+            <td id="msg5" class="mensagem oculta">
+                desliga você! não, desliga você! não, desliga você! ksksksks
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+    const imagem = document.getElementById("imagem-diferencas");
+    const area = document.getElementById("area-cliques");
+    const encontrados = new Set();
+
+    /*
+      COORDENADAS DE EXEMPLO.
+
+      x = porcentagem da largura da imagem, da esquerda.
+      y = porcentagem da altura da imagem, de cima.
+      tolerance = raio aproximado para aceitar um clique.
+
+      Ajuste x e y para os locais reais dos sete erros.
+    */
+    const erros = [
+        { x: 1213, y: 599, tolerance: 3 },
+        { x: 1239, y: 1085, tolerance: 3 },
+        { x: 837, y: 607, tolerance: 3 },
+        { x: 799, y: 727, tolerance: 3 },
+        { x: 707, y: 745, tolerance: 7 },
+        { x: 937, y: 605, tolerance: 3 },
+        { x: 563, y: 1143, tolerance: 5 }
+    ];
+
+    // Mensagens liberadas em cada acerto.
+    const acoes = [
+        () => {
+            document.getElementById("nome-revelado").textContent =
+                "peso do";
+        },
+        () => {
+            document.getElementById("nome-revelado").textContent =
+                "peso do sobrenome >o<";
+        },
+        () => {
+            document.getElementById("msg1").classList.remove("oculta");
+        },
+        () => {
+            document.getElementById("msg2").classList.remove("oculta");
+        },
+        () => {
+            document.getElementById("msg3").classList.remove("oculta");
+        },
+        () => {
+            document.getElementById("msg4").classList.remove("oculta");
+        },
+        () => {
+            document.getElementById("msg5").classList.remove("oculta");
+        }
+    ];
+
+    area.addEventListener("click", function(event) {
+        const rect = imagem.getBoundingClientRect();
+
+        const x = ((event.clientX - rect.left) / rect.width) * 100;
+        const y = ((event.clientY - rect.top) / rect.height) * 100;
+
+        const indice = erros.findIndex((erro, i) => {
+            if (encontrados.has(i)) return false;
+
+            const dx = (x - erro.x) * rect.width / 100;
+            const dy = (y - erro.y) * rect.height / 100;
+
+            return Math.hypot(dx, dy) <=
+                erro.tolerance * rect.width / 100;
+        });
+
+        // Cliques fora dos erros não fazem nada.
+        if (indice === -1) return;
+
+        encontrados.add(indice);
+
+        // Marca o erro com um círculo verde.
+        const circulo = document.createElement("div");
+        circulo.className = "circulo";
+        circulo.style.left = erros[indice].x + "%";
+        circulo.style.top = erros[indice].y + "%";
+        area.appendChild(circulo);
+
+        // Revela a mensagem correspondente.
+        acoes[indice]();
+
+        // Atualiza o contador.
+        document.getElementById("quantidade").textContent =
+            encontrados.size;
+
+        if (encontrados.size === 7) {
+            document.getElementById("contador").textContent =
+                "pabens! 7 / 7";
+        }
+    });
+</script>
+
 </body>
 </html>
